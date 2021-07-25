@@ -1,6 +1,9 @@
 import React, { useState } from 'react';
 import Dropzone from 'react-dropzone';
 import { Typography, Button, Form, message, Input, Icon, Select } from 'antd';
+import axios from 'axios';
+
+import { VIDEO_SERVER } from '../../Config';
 
 const { Title } = Typography;
 const { TextArea } = Input;
@@ -38,20 +41,35 @@ function VideoUploadPage() {
 
     const onCategoryChange = (e) => {
         setCategory(e.currentTarget.value);
-    }
+    };
+
+    const onDrop = (files) => {
+        let formData = new FormData;
+        const config = {
+            header: {'content-type': 'multipart/form-data'}
+        };
+        formData.append('file', files[0]);
+
+        axios.post(`${VIDEO_SERVER}/uploadfiles`, formData, config)
+            .then(response => {
+                if (!response.data.success) return alert('비디오 업로드에 실패했습니다.'); 
+
+                console.log(response.data);
+            })
+    };
 
     return (
         <div style={{ maxWidth: '700px', margin: '2rem auto' }}>
             <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
                 <Title level={2}>🎬 비디오 업로드</Title>
             </div>
-            <Form onsubmit>
+            <Form onSubmit>
                 <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                     {/* Drop zone */}
                     <Dropzone 
-                    onDrop 
-                    multiple
-                    maxSize>
+                    onDrop={onDrop}
+                    multiple={false}
+                    maxSize={100 * 1024 * 1024}>
                         {({ getRootProps, getInputProps }) => (
                             <div style={{ width: '300px', height: '240px', border: '1px solid lightgray', display: 'flex', alignItems: 'center', justifyContent: 'center'}} {...getRootProps()}>
                                 <input {...getInputProps()}/>
@@ -83,7 +101,7 @@ function VideoUploadPage() {
             <label>공개</label>
             <Select onChange={onPrivateChange}>
                 {PrivateOptions.map((item, index) => {
-                    return <option key={item.index} value={item.label}>{item.label}</option>
+                    return <option key={item.value} value={item.label}>{item.label}</option>
                 })}
             </Select>
 
@@ -93,7 +111,7 @@ function VideoUploadPage() {
             <label>카테고리</label>
             <Select onChange={onCategoryChange}>
                 {CategoryOptions.map((item, index) => {
-                    return <option key={item.index} value={item.label}>{item.label}</option>
+                    return <option key={item.value} value={item.label}>{item.label}</option>
                 })}
             </Select>
 
