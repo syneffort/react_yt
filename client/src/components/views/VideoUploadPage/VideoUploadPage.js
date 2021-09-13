@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import Dropzone from 'react-dropzone';
 import { Typography, Button, Form, message, Input, Icon, Select } from 'antd';
 import axios from 'axios';
+import { useSelector } from 'react-redux';
 
 import { SERVER_URL, VIDEO_SERVER } from '../../Config';
 
@@ -20,8 +21,9 @@ const CategoryOptions = [
     {value: 3, label: '애완동물 & 동물' },
 ];
 
-function VideoUploadPage() {
+function VideoUploadPage(props) {
 
+    const user = useSelector(state => state.user);
     const [VideoTitle, setVideoTitle] = useState("");
     const [Description, setDescription] = useState("");
     const [Private, setPrivate] = useState(0);
@@ -39,11 +41,11 @@ function VideoUploadPage() {
     };
 
     const onPrivateChange = (e) => {
-        setPrivate(e.currentTarget.value);
+        setPrivate(e === '공개' ? 1 : 0);
     };
 
     const onCategoryChange = (e) => {
-        setCategory(e.currentTarget.value);
+        setCategory(e);
     };
 
     const onDrop = (files) => {
@@ -56,8 +58,6 @@ function VideoUploadPage() {
         axios.post(`${VIDEO_SERVER}/uploadfiles`, formData, config)
             .then(response => {
                 if (!response.data.success) return alert('비디오 업로드에 실패했습니다.'); 
-
-                console.log(response.data);
 
                 let variable = {
                     url: response.data.url,
@@ -78,12 +78,39 @@ function VideoUploadPage() {
             })
     };
 
+    const onSubmit = (e) => {
+        e.preventDefault();
+        
+        const variables = {
+            writer: user.userData._id,
+            title: VideoTitle,
+            description: Description,
+            privacy: Private,
+            filePath: FilePath,
+            category: Category,
+            duration: Duration,
+            thumbnail: ThumbnailPath
+        };
+        axios.post(`${VIDEO_SERVER}/uploadVideo`, variables)
+        .then(response => {
+            if (response.data.success) {
+                message.success('성공적으로 업로드했습니다.');
+
+                setTimeout(() => {
+                    props.history.push('/');
+                }, 3000);
+            } else {
+                alert('비디오 업로드에 실패했습니다.');
+            }
+        })
+    }
+
     return (
         <div style={{ maxWidth: '700px', margin: '2rem auto' }}>
             <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
                 <Title level={2}>🎬 비디오 업로드</Title>
             </div>
-            <Form onSubmit>
+            <Form onSubmit={onSubmit}>
                 <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                     {/* Drop zone */}
                     <Dropzone 
@@ -121,9 +148,9 @@ function VideoUploadPage() {
             <br/>
 
             <label>공개</label>
-            <Select onChange={onPrivateChange}>
+            <Select onChange={onPrivateChange} defaultValue={PrivateOptions[0].label}>
                 {PrivateOptions.map((item, index) => {
-                    return <option key={item.value} value={item.label}>{item.label}</option>
+                    return <Select.Option key={item.value} value={item.label}>{item.label}</Select.Option>
                 })}
             </Select>
 
@@ -131,16 +158,16 @@ function VideoUploadPage() {
             <br/>
 
             <label>카테고리</label>
-            <Select onChange={onCategoryChange}>
+            <Select onChange={onCategoryChange} defaultValue={CategoryOptions[0].label}>
                 {CategoryOptions.map((item, index) => {
-                    return <option key={item.value} value={item.label}>{item.label}</option>
+                    return <Select.Option key={item.value} value={item.label}>{item.label}</Select.Option>
                 })}
             </Select>
 
             <br/>
             <br/>
 
-            <Button type="primary" size="large" onClick>
+            <Button type="primary" size="large" onClick={onSubmit}>
                 업로드
             </Button>
 

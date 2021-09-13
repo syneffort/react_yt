@@ -2,6 +2,7 @@ const express = require('express');
 const multer = require('multer');
 const path = require('path');
 const ffmpeg = require('fluent-ffmpeg');
+const Video = require('../models/Video');
 
 const router = express.Router();
 // const Video = require('../models/Video');
@@ -29,7 +30,7 @@ router.post('/uploadfiles', (req, res) => {
         if (err) return res.json({ success: false, err });
         
         return res.json({ success: true, url: res.req.file.path, fileName: res.req.file.filename });
-    })
+    });
 });
 
 router.post('/thumbnail', (req, res) => {
@@ -38,7 +39,6 @@ router.post('/thumbnail', (req, res) => {
     let fileDuration;
 
     ffmpeg.ffprobe(req.body.url, function(err, metadata) {
-        console.dir(metadata);
         console.log(metadata.format.duration);
         fileDuration = metadata.format.duration;
     });
@@ -65,6 +65,15 @@ router.post('/thumbnail', (req, res) => {
         size: '320x240',
         // %b : base input name w/o extension
         filename: 'thumbnail-%b.png'
+    });
+});
+
+router.post('/uploadVideo', (req, res) => {
+    const video = new Video(req.body);
+    video.save((err, doc) => {
+        if (err) return res.json({ success: false, err });
+
+        res.status(200).json({ success: true });
     });
 });
 
