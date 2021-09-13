@@ -3,7 +3,7 @@ import Dropzone from 'react-dropzone';
 import { Typography, Button, Form, message, Input, Icon, Select } from 'antd';
 import axios from 'axios';
 
-import { VIDEO_SERVER } from '../../Config';
+import { SERVER_URL, VIDEO_SERVER } from '../../Config';
 
 const { Title } = Typography;
 const { TextArea } = Input;
@@ -26,6 +26,9 @@ function VideoUploadPage() {
     const [Description, setDescription] = useState("");
     const [Private, setPrivate] = useState(0);
     const [Category, setCategory] = useState("영화 & 애니메이션");
+    const [FilePath, setFilePath] = useState("");
+    const [Duration, setDuration] = useState("");
+    const [ThumbnailPath, setThumbnailPath] = useState("");
 
     const onTitleChange = (e) => {
         setVideoTitle(e.currentTarget.value);
@@ -55,6 +58,23 @@ function VideoUploadPage() {
                 if (!response.data.success) return alert('비디오 업로드에 실패했습니다.'); 
 
                 console.log(response.data);
+
+                let variable = {
+                    url: response.data.url,
+                    fileName: response.data.fileName
+                };
+
+                setFilePath(response.data.url);
+
+                axios.post(`${VIDEO_SERVER}/thumbnail`, variable)
+                .then(response => {
+                    if (response.data.success) {
+                        setDuration(response.data.fileDuration);
+                        setThumbnailPath(response.data.url);
+                    } else {
+                        alert('썸네일 생성에 실패했습니다.');
+                    }
+                });
             })
     };
 
@@ -79,9 +99,11 @@ function VideoUploadPage() {
                     </Dropzone>
 
                     {/* Thumbnail zone */}
-                    <div>
-                        <img src alt/>
-                    </div>
+                    {ThumbnailPath && 
+                        <div>
+                        <img src={SERVER_URL + `/${ThumbnailPath}`} alt="thumbnail"/>
+                        </div>
+                    }
                 </div>
 
             <br/>
