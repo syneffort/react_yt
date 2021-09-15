@@ -16,7 +16,6 @@ function LandingPage() {
         axios.get(`${VIDEO_SERVER}/getVideos`)
         .then(response => {
             if (response.data.success) {
-                console.log(response.data);
                 setVideo(response.data.videos);
             } else {
                 alert('비디오 가져오기에 실패했습니다.');
@@ -30,7 +29,7 @@ function LandingPage() {
         let seconds = Math.floor(video.duration - (minute * 60));
 
         return <Col key={index} lg={6} md={8} xs={24}>
-        <a href={`/video/post/${video._id}`}>
+        <a href={`/video/${video._id}`}>
             <div style={{ position: 'relative' }}>
                 <img style={{ width: '100%' }} src={`${SERVER_URL}/${video.thumbnail}`} alt="thumbnail"/>
                 <div className="duration">
