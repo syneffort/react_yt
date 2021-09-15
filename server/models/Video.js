@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 const { Schema } = mongoose;
 
 const videoSchema = new Schema({
-    wirter: {
+    writer: {
         type: Schema.Types.ObjectId,
         ref: 'User'
     },
