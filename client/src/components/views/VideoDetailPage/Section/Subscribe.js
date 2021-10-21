@@ -18,7 +18,7 @@ function Subscribe(props) {
                 }
             });
 
-        let subscribedVariable = { userTo: props.userTo, userFrom: localStorage.getItem('userId') }
+        let subscribedVariable = { userTo: props.userTo, userFrom: props.userFrom }
         
         axios.post(`${SUBSCRIBE_SERVER}/subscribed`, subscribedVariable)
             .then(response => {
@@ -28,7 +28,34 @@ function Subscribe(props) {
                     alert('구독 정보 가져오기에 실패했습니다.')
                 }
             })
-    }, [])
+    }, []);
+
+    const onSubscribe = () => {
+        
+        let subscirbeVarible = { userTo: props.userTo, userFrom: props.userFrom };
+
+        if (Subscribed) {
+            axios.post(`${SUBSCRIBE_SERVER}/unsubscribe`, subscirbeVarible)
+                .then(response => {
+                    if (response.data.success) {
+                        setSubscribeNumber(SubscribeNumber - 1);
+                        setSubscribed(!Subscribed);
+                    } else {
+                        alert('구독 취소에 실패했습니다.');
+                    }
+                });
+        } else {
+            axios.post(`${SUBSCRIBE_SERVER}/subscribe`, subscirbeVarible)
+                .then(response => {
+                    if (response.data.success) {
+                        setSubscribeNumber(SubscribeNumber + 1);
+                        setSubscribed(!Subscribed);
+                    } else {
+                        alert('구독 신청에 실패했습니다.');
+                    }
+                });
+        }
+    };
 
     return (
         <div>
@@ -38,7 +65,7 @@ function Subscribe(props) {
                     color: 'white', padding: '10px 16px', border: 'none',
                     fontWeight: '500', fontSize: '1rem', textTransform: 'uppercase'
             }}
-            onClick
+            onClick={onSubscribe}
             >
                 {SubscribeNumber} {Subscribed ? '구독중' : '구독'}
             </button>

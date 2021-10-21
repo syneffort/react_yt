@@ -21,7 +21,7 @@ function VideoDetailPage(props) {
                 } else {
                     alert('비디오 가져오기에 실패했습니다.');
                 }
-            })
+            });
     }, []);
 
     if (VideoDetail.writer) {
@@ -31,7 +31,7 @@ function VideoDetailPage(props) {
                     <div style={{ width: '100%', padding: '3rem 4rem' }}>
                         <video style={{ width: '100%' }} src={`${SERVER_URL}/${VideoDetail.filePath}`} controls/>
                         <List.Item
-                            actions={[<Subscribe userTo={VideoDetail.writer._id}/>]}
+                            actions={[<Subscribe userTo={VideoDetail.writer._id} userFrom={localStorage.getItem('userId')}/>]}
                         >
                             <List.Item.Meta
                                 avatar={<Avatar src={VideoDetail.writer.image} />}
