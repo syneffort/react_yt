@@ -1,5 +1,5 @@
 // SERVER
-export const SERVER_URL = 'http://localhost:5000';
+export const SERVER_URL = 'http://localhost:5001';
 
 // SERVER ROUTES
 export const USER_SERVER = '/api/users';

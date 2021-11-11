@@ -24,7 +24,7 @@ mongoose.connect(config.mongoURI, {
 });
 
 const app = express();
-app.set('port', process.env.PORT || 5000);
+app.set('port', process.env.PORT || 5001);
 
 app.use(cors());
 app.use(bodyParser.urlencoded({ extended: true })); // application/x-www-form-urlencoded
