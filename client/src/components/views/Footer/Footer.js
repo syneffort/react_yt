@@ -4,9 +4,9 @@ import {Icon} from 'antd';
 function Footer() {
     return (
         <div style={{
-            height: '80px', display: 'flex',
+            height: '60px', display: 'flex',
             flexDirection: 'column', alignItems: 'center',
-            justifyContent: 'center', fontSize:'1rem'
+            justifyContent: 'center', fontSize:'0.8rem'
         }}>
            <p> Happy Coding 🥰</p>
         </div>
