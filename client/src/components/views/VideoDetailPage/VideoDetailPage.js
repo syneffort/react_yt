@@ -4,6 +4,7 @@ import axios from 'axios';
 import { SERVER_URL, VIDEO_SERVER } from '../../Config';
 import SideVideo from './Section/SideVideo';
 import Subscribe from './Section/Subscribe';
+import Comment from './Section/Comment';
 
 function VideoDetailPage(props) {
 
@@ -45,6 +46,7 @@ function VideoDetailPage(props) {
                         </List.Item>
     
                         {/* Comments */}
+                        <Comment/>
                     </div>
                 </Col>
     
