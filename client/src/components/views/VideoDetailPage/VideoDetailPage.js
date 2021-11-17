@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Row, Col, List, Avatar } from 'antd';
 import axios from 'axios';
-import { SERVER_URL, VIDEO_SERVER } from '../../Config';
+import { SERVER_URL, VIDEO_SERVER, COMMENT_SERVER } from '../../Config';
 import SideVideo from './Section/SideVideo';
 import Subscribe from './Section/Subscribe';
 import Comment from './Section/Comment';
@@ -12,6 +12,8 @@ function VideoDetailPage(props) {
     const variable = { videoId };
 
     const [VideoDetail, setVideoDetail] = useState([]);
+    const [Comments, setComments] = useState([]);
+    const [IsFinished, setIsFinished] = useState(false)
 
     useEffect(() => {
         axios.post(`${VIDEO_SERVER}/getVideoDetail`, variable)
@@ -23,12 +25,26 @@ function VideoDetailPage(props) {
                     alert('비디오 가져오기에 실패했습니다.');
                 }
             });
+        
+        axios.post(`${COMMENT_SERVER}/getComments`, variable)
+            .then(response => {
+                if (response.data.success) {
+                    setComments(response.data.comments);
+                } else {
+                    alert('댓글 정보 가져오기에 실패했습니다.');
+                }
+
+                setIsFinished(true);
+            });
     }, []);
 
-    if (VideoDetail.writer) {
+    const refreshFunction = (newComment) => {
+        setComments(Comments.concat(newComment));
+    }
+
+    if (VideoDetail.writer && IsFinished) {
 
         const subscribeButton = VideoDetail.writer._id !== localStorage.getItem('userId') && [<Subscribe userTo={VideoDetail.writer._id} userFrom={localStorage.getItem('userId')}/>];
-
         return (
             <Row gutter={[16, 16]}>
                 <Col lg={18} xs={24}>
@@ -46,7 +62,7 @@ function VideoDetailPage(props) {
                         </List.Item>
     
                         {/* Comments */}
-                        <Comment postId={videoId}/>
+                        <Comment refreshFunction={refreshFunction} postId={videoId} commentList={Comments}/>
                     </div>
                 </Col>
     

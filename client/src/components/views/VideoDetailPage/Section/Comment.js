@@ -1,6 +1,7 @@
 import axios from 'axios';
 import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
+import SingleComment from './SingleComment';
 
 import { COMMENT_SERVER } from '../../../Config';
 
@@ -9,7 +10,7 @@ function Comment(props) {
     const user = useSelector(state => state.user);
     const [commentValue, setCommentValue] = useState('');
 
-    const videoId = props.videoId;
+    const postId = props.postId;
 
     const handleClick = (event) => {
         setCommentValue(event.currentTarget.value);
@@ -21,17 +22,19 @@ function Comment(props) {
         const variables = {
             content: commentValue,
             writer: user.userData._id,
-            postId: videoId,
+            postId: postId,
         }
 
         axios.post(`${COMMENT_SERVER}/saveComment`, variables)
             .then(response => {
                 if (response.data.success) {
                     console.log(response.data.result);
+                    setCommentValue('');
+                    props.refreshFunction(response.data.result);
                 } else {
                     alert('댓글 입력에 실패했습니다.');
                 }
-            })
+            });
     }
 
     return (
@@ -41,6 +44,12 @@ function Comment(props) {
             <hr/>
 
             {/* Comment Lists */}
+
+            {props.commentList && props.commentList.map((comment, index) => (
+                (!comment.responseTo &&
+                <SingleComment refreshFunction={props.refreshFunction} comment={comment} postId={postId} />
+                )
+            ))}
 
             {/* Root Comment Form */}
 
