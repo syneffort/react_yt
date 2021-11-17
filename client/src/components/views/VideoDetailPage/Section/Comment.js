@@ -47,7 +47,7 @@ function Comment(props) {
 
             {props.commentList && props.commentList.map((comment, index) => (
                 (!comment.responseTo &&
-                <SingleComment refreshFunction={props.refreshFunction} comment={comment} postId={postId} />
+                <SingleComment key={index} refreshFunction={props.refreshFunction} comment={comment} postId={postId} />
                 )
             ))}
 
