@@ -4,6 +4,7 @@ import { Comment, Avatar, Button, Input } from 'antd';
 import axios from 'axios';
 
 import { COMMENT_SERVER } from '../../../Config';
+import LikeDislikes from './LikeDislikes';
 
 const { TextArea } = Input;
 
@@ -47,7 +48,8 @@ function SingleComment(props) {
     }
 
     const actions = [
-        <span onClick={onClickReplyOpen} key='comment-basic-reply-to'>댓글</span>
+        <LikeDislikes comment userId={localStorage.getItem('userId')} commentId={props.comment}/>
+        ,<span onClick={onClickReplyOpen} key='comment-basic-reply-to'>댓글</span>
     ]
 
     return (
