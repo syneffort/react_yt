@@ -10,7 +10,8 @@ function LikeDislikes(props) {
     const [Dislikes, setDislikes] = useState(0)
     const [LikeAction, setLikeAction] = useState(null);
     const [DislikeAction, setDislikeAction] = useState(null);
-    
+
+    let processed = false;
 
     let variables = {};
 
@@ -54,7 +55,79 @@ function LikeDislikes(props) {
                     alert('싫어요 정보 가져오기에 실패했습니다.');
                 }
             });
-    }, [])
+    }, []);
+
+    const onLike = () => {
+        if (processed) return;
+
+        processed = true;
+        if (LikeAction === null) {
+            axios.post(`${LIKE_SERVER}/upLike`, variables)
+                .then(response => {
+                    if (response.data.success) {
+                        setLikes(Likes + 1);
+                        setLikeAction('liked');
+                        
+                        if (DislikeAction !== null) {
+                            setDislikeAction(null);
+                            setDislikes(Dislikes - 1);
+                        }
+                    } else {
+                        alert('좋아요 처리에 실패했습니다.');
+                    }
+
+                    processed = false;
+                });
+        } else {
+            axios.post(`${LIKE_SERVER}/unLike`, variables)
+                .then(response => {
+                    if (response.data.success) {
+                        setLikes(Likes - 1);
+                        setLikeAction(null);
+                    } else {
+                        alert('좋아요 취소에 실패했습니다.');
+                    }
+
+                    processed = false;
+                });
+        }
+    }
+
+    const onDislike = () => {
+        if (processed) return;
+
+        processed = true;
+        if (DislikeAction === null) {
+            axios.post(`${LIKE_SERVER}/upDislike`, variables)
+                .then(response => {
+                    if (response.data.success) {
+                        setDislikes(Dislikes + 1);
+                        setDislikeAction('disliked');
+                        
+                        if (LikeAction !== null) {
+                            setLikeAction(null);
+                            setLikes(Likes - 1);
+                        }
+                    } else {
+                        alert('싫어요 처리에 실패했습니다.');
+                    }
+
+                    processed = false;
+                });
+        } else {
+            axios.post(`${LIKE_SERVER}/unDislike`, variables)
+                .then(response => {
+                    if (response.data.success) {
+                        setDislikes(Dislikes - 1);
+                        setDislikeAction(null);
+                    } else {
+                        alert('싫어요 취소에 실패했습니다.');
+                    }
+
+                    processed = false;
+                });
+        }
+    }
 
     return (
         <div>
@@ -63,7 +136,7 @@ function LikeDislikes(props) {
                     <Icon 
                         type='like'
                         theme={LikeAction === 'liked' ? 'filled' : 'outlined'}
-                        onClick
+                        onClick={onLike}
                     />
                 </Tooltip>
                 <span style={{ paddingLeft:'8px', cursor:'auto'}}>
@@ -76,7 +149,7 @@ function LikeDislikes(props) {
                     <Icon 
                         type='dislike'
                         theme={DislikeAction === 'disliked' ? 'filled' : 'outlined'}
-                        onClick
+                        onClick={onDislike}
                     />
                 </Tooltip>
                 <span style={{ paddingLeft:'8px', cursor:'auto'}}>
