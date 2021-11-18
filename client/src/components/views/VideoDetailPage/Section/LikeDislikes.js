@@ -131,7 +131,7 @@ function LikeDislikes(props) {
 
     return (
         <div>
-            <span key='comment-basic-like' style={{ paddingRight: '10px', cursor:'auto' }}>
+            <span key='comment-basic-like' style={{ paddingLeft:'8px', paddingRight:'8px', cursor:'auto' }}>
                 <Tooltip title='Like'>
                     <Icon 
                         type='like'
@@ -144,7 +144,7 @@ function LikeDislikes(props) {
                 </span>
             </span>
 
-            <span key='comment-basic-dislike' style={{ paddingRight: '10px', cursor:'auto' }}>
+            <span key='comment-basic-dislike' style={{ paddingLeft:'8px', paddingRight:'8px', cursor:'auto' }}>
                 <Tooltip title='Dislike'>
                     <Icon 
                         type='dislike'
@@ -152,7 +152,7 @@ function LikeDislikes(props) {
                         onClick={onDislike}
                     />
                 </Tooltip>
-                <span style={{ paddingLeft:'8px', cursor:'auto'}}>
+                <span style={{ paddingLeft:'4px', paddingRight:'4px', cursor:'auto'}}>
                     {Dislikes}
                 </span>
             </span>
