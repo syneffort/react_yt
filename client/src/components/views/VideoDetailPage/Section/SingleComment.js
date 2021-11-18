@@ -12,21 +12,23 @@ function SingleComment(props) {
     const user = useSelector(state => state.user);
     
     const [OpenReply, setOpenReply] = useState(false);
-    const [ComentValue, setComentValue] = useState('')
+    const [CommentValue, setCommentValue] = useState('')
 
     const onClickReplyOpen = () => {
         setOpenReply(!OpenReply);
     }
 
     const onHandleChange = (event) => {
-        setComentValue(event.currentTarget.CommentValue)
+        setCommentValue(event.currentTarget.value);
     }
 
     const onSubmit = (event) => {
         event.preventDefault();
 
+        console.log(CommentValue);
+
         const variables = {
-            content: ComentValue,
+            content: CommentValue,
             writer: user.userData._id,
             postId: props.postId,
             responseTo: props.comment._id
@@ -35,8 +37,8 @@ function SingleComment(props) {
         axios.post(`${COMMENT_SERVER}/saveComment`, variables)
             .then(response => {
                 if (response.data.success) {
-                    console.log(response.data.result);
-                    setComentValue('');
+                    setCommentValue('');
+                    setOpenReply(false);
                     props.refreshFunction(response.data.result);
                 } else {
                     alert('댓글 입력에 실패했습니다.');
@@ -62,7 +64,7 @@ function SingleComment(props) {
                     <textarea
                         style={{ width: '100%', borderRadius: '5px' }}
                         onChange={onHandleChange}
-                        value={ComentValue}
+                        value={CommentValue}
                         placeholder="댓글을 입력해 주세요."
                     />
                     <br/>
